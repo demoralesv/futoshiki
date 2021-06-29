@@ -118,6 +118,8 @@ class Jugar:
     def jugar(self):
      
         self.num_seleccionado = ""
+        #top_lista = [[],[],[]]
+        #top_10 = Creadores.escribir_datos_binary("futoshiki2021top10.dat",top_lista)
         self.bandera= False
         self.bandera_juego = False
         self.num_partida = rm.randint(0,2)
@@ -1519,8 +1521,8 @@ class Jugar:
             self.top10_List[0] = top_lista_ordenada
             Creadores.escribir_datos_binary("futoshiki2021top10.dat",self.top10_List)
         if self.nivel == "intermedio":
-            top_intermedio_List=self.top10_List[1]
-            top_lista_ordenada= self.ordenar_top(top_intermedio_List)
+            top_intermedio_List = self.top10_List[1]
+            top_lista_ordenada = self.ordenar_top(top_intermedio_List)
             self.top10_List[1] = top_lista_ordenada
             Creadores.escribir_datos_binary("futoshiki2021top10.dat",self.top10_List)
         if self.nivel == "dificil":
@@ -1535,6 +1537,7 @@ class Jugar:
         largo=len(lista)
         
 
+     
         for ind,p in enumerate(lista):
                 top_lista=[]
                 top_lista.insert(0,lista[count][0])
@@ -1549,52 +1552,95 @@ class Jugar:
         if self.nom_jugador.get()=="":
          self.ordenar_top_niveles()
           
+         top=self.consultar_top10()
+         count=0
+         relx=0
+         rely=0
+         ventana_top = Creadores.crear_ventana("TOP 10",1000,500,ventana_principal)
+         top_10_label= tk.Label(ventana_top,text="TOP 10").place(relx=0.500,rely=0.050,anchor=CENTER)
+         top_facil_label = tk.Label(ventana_top,text="NIVEL FACIL").place(relx=0.100,rely=0.100,anchor=CENTER)
+         jugador = tk.Label(ventana_top,text="JUGADOR").place(relx=0.050,rely=0.150,anchor=CENTER)
+         tiempo = tk.Label(ventana_top,text="TIEMPO").place(relx=0.150,rely=0.150,anchor=CENTER)
+         self.generar_label(ventana_top,0.050,0.250,0,top)
+         top_intermedio_label = tk.Label(ventana_top,text="NIVEL INTERMEDIO").place(relx=0.500,rely=0.100,anchor=CENTER)
+         jugador = tk.Label(ventana_top,text="JUGADOR").place(relx=0.450,rely=0.150,anchor=CENTER)
+         tiempo = tk.Label(ventana_top,text="TIEMPO").place(relx=0.550,rely=0.150,anchor=CENTER)
+         self.generar_label(ventana_top,0.450,0.250,1,top)
+         top_dificil_label = tk.Label(ventana_top,text="NIVEL DIFICIL").place(relx=0.850,rely=0.100,anchor=CENTER)
+         jugador = tk.Label(ventana_top,text="JUGADOR").place(relx=0.800,rely=0.150,anchor=CENTER)
+         tiempo = tk.Label(ventana_top,text="TIEMPO").place(relx=0.900,rely=0.150,anchor=CENTER)
+         self.generar_label(ventana_top,0.800,0.250,2,top)
         else:
-            self.top_10()
+         self.insert_top_10()
+         self.ordenar_top_niveles()
+         top=self.consultar_top10()
+         count=0
+         relx=0
+         rely=0
+         ventana_top = Creadores.crear_ventana("TOP 10",1000,500,ventana_principal)
+         top_10_label= tk.Label(ventana_top,text="TOP 10").place(relx=0.500,rely=0.050,anchor=CENTER)
+         top_facil_label = tk.Label(ventana_top,text="NIVEL FACIL").place(relx=0.100,rely=0.100,anchor=CENTER)
+         jugador = tk.Label(ventana_top,text="JUGADOR").place(relx=0.050,rely=0.150,anchor=CENTER)
+         tiempo = tk.Label(ventana_top,text="TIEMPO").place(relx=0.150,rely=0.150,anchor=CENTER)
+         self.generar_label(ventana_top,0.050,0.250,0,top)
+         top_intermedio_label = tk.Label(ventana_top,text="NIVEL INTERMEDIO").place(relx=0.500,rely=0.100,anchor=CENTER)
+         jugador = tk.Label(ventana_top,text="JUGADOR").place(relx=0.450,rely=0.150,anchor=CENTER)
+         tiempo = tk.Label(ventana_top,text="TIEMPO").place(relx=0.550,rely=0.150,anchor=CENTER)
+         self.generar_label(ventana_top,0.450,0.250,1,top)
+         top_dificil_label = tk.Label(ventana_top,text="NIVEL DIFICIL").place(relx=0.850,rely=0.100,anchor=CENTER)
+         jugador = tk.Label(ventana_top,text="JUGADOR").place(relx=0.800,rely=0.150,anchor=CENTER)
+         tiempo = tk.Label(ventana_top,text="TIEMPO").place(relx=0.900,rely=0.150,anchor=CENTER)
+         self.generar_label(ventana_top,0.800,0.250,2,top)
+
+    def generar_label(self,ventana,relx,rely,list_index,list_top):
+        largo=len(list_top[list_index])
+        if largo > 0:
+            for ind,p in enumerate(list_top[list_index]):
+                label=tk.Label(ventana,text=list_top[list_index][ind]).place(relx=relx,rely=rely,anchor=CENTER)
+                rely=rely+0.050
+        else:
+            label=tk.Label(ventana,text="No hay datos").place(relx=relx,rely=rely,anchor=CENTER)
+
+        return label
 
     def insert_top_10(self):
-       
-            entrada = datetime.strptime(self.hora_inicio,"%H:%M:%S")
-            """ 
-            salida = datetime.strptime(self.hora_finalizacion,"%H:%M:%S")
-            tiempo_total = salida - entrada
-            top1_nombre = self.nom_jugador.get()
-            top1_tiempo = tiempo_total
-
-            self.top10_List[0] = top_lista_ordenada
-            Creadores.escribir_datos_binary("futoshiki2021top10.dat",self.top10_List)
+        self.consultar_top10()
+        self.nuevo_resultado=[]
+        hora_inicio=self.hora_inicio
+        hora_finalizacion=self.hora_finalizacion
+        tiempo_total=self.calcula_horas(hora_inicio,hora_finalizacion)
         
-        
-        ventana_top = Creadores.crear_ventana("TOP 10",1000,500,ventana_principal)
-        top_10_label= tk.Label(ventana_top,text="TOP 10").place(relx=0.500,rely=0.050,anchor=CENTER)
-        top_facil_label = tk.Label(ventana_top,text="NIVEL FACIL").place(relx=0.100,rely=0.100,anchor=CENTER)
-        jugador = tk.Label(ventana_top,text="JUGADOR").place(relx=0.050,rely=0.150,anchor=CENTER)
-        tiempo = tk.Label(ventana_top,text="TIEMPO").place(relx=0.200,rely=0.150,anchor=CENTER)
-        top_intermedio_label = tk.Label(ventana_top,text="NIVEL INTERMEDIO").place(relx=0.500,rely=0.100,anchor=CENTER)
-        top_dificil_label = tk.Label(ventana_top,text="NIVEL DIFICIL").place(relx=0.850,rely=0.100,anchor=CENTER)
-        top_lista = [[("",""),("",""),("",""),("",""),("",""),("",""),("",""),("",""),("",""),("","")],[("",""),("",""),("",""),("",""),("",""),("",""),("",""),("",""),("",""),("","")],[("",""),("",""),("",""),("",""),("",""),("",""),("",""),("",""),("",""),("","")]]
-        #top_10 = Creadores.escribir_datos_binary("futoshiki2021top10.dat",top_lista)
-
         if self.nivel == "facil":
-            top_facil = [("",""),("",""),("",""),("",""),("",""),("",""),("",""),("",""),("",""),("","")]
-            top = Creadores.leer_datos_binary("futoshiki2021top10.dat")
-            
-            top1_nombre = self.nom_jugador.get()
-            #top1_tiempo = tiempo_total
-            
-            top_lista[0] = top_facil)
-            #top.insert([0][2],"")
-            #top.insert([0][3],"")
-            #top.insert([0][4],"")
-            #top.insert([0][5],"")
-            to = Creadores.escribir_datos_binary("futoshiki2021top10.dat",top)
-            top_label = tk.Label(ventana_top,text=top[0][0]).place(relx=0.050,rely=0.200,anchor=CENTER)
+          top_facil_List=self.top10_List[0]
+          top_facil_List.append((self.nom_jugador.get(),tiempo_total[3]))
+          self.top10_List[0]=top_facil_List
+          Creadores.escribir_datos_binary("futoshiki2021top10.dat",self.top10_List)
         if self.nivel == "intermedio":
-            pass
+                top_intermedio_List=self.top10_List[1]
+                top_intermedio_List.append((self.nom_jugador.get(),tiempo_total[3]))
+                self.top10_List[1]=top_intermedio_List
+                Creadores.escribir_datos_binary("futoshiki2021top10.dat",self.top10_List)
         if self.nivel == "dificil":
-            pass"""
-        
-        #top = Creadores.escribir_datos_binary("futoshiki2021top10.dat",top_lista)
+                top_dificil_List=self.top10_List[2]
+                top_dificil_List.append((self.nom_jugador.get(),tiempo_total[3]))
+                self.top10_List[2]=top_dificil_List
+                Creadores.escribir_datos_binary("futoshiki2021top10.dat",self.top10_List)
+    def calcula_horas(self,hora_inicio,hora_finalizacion):
+        entrada = datetime.strptime(hora_inicio,"%H:%M:%S")
+        salida = datetime.strptime(hora_finalizacion,"%H:%M:%S")
+        tiempo = salida - entrada
+        tiempo_list=[] ###[0]Segundos, [1] Horas
+        segundos=tiempo.seconds
+        tiempo_list.insert(0,int(segundos/3600)) ###Horas
+        segundos-=tiempo_list[0]*3600 
+        tiempo_list.insert(1,int(segundos/60)) ##Minutos
+        segundos-=tiempo_list[1]*60##Segundos 
+        tiempo_list.insert(2,segundos) 
+        tiempo_list.insert(3,tiempo.seconds/3600)  ###Segundos Completos
+        tiempo_list.insert(3,tiempo) 
+        return tiempo_list
+       
+
 # esta funcion es la restriccion para los numeros fijos en la cuadricula
     def numero_fijo(self,btn): 
         btn.config(bg="red")
