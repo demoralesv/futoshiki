@@ -29,6 +29,7 @@ class Jugar:
     jugadas = []
     bandera = False
     bandera_timer = False
+    bandera_juego = False
     sec = ""
     min = ""
     hrs = "" 
@@ -61,6 +62,7 @@ class Jugar:
         self.res_ver8 = tk.Label()
         self.res_ver9 = tk.Label()
         self.bandera = False
+        self.bandera_juego = False
         self.num_seleccionado = ""
  #funcion que selecciona y deselecciona los digitos
     def toggle(self,num):
@@ -110,19 +112,14 @@ class Jugar:
         nombre = self.nom_jugador.get() 
         if len(nombre) > 20:
             mensaje("NOMBRE DEBE SER MENOR A 20 CARACTERES")
-            print("eliminame")
             self.nom_jugador.set("")
     
 #Ventana Jugar
     def jugar(self):
-        """self.hora_inicio = time.strftime("%H:%M:%S")
-        self.hora_finalizacion = time.strftime("%H:%M:%S")
-        entrada = datetime.strptime(self.hora_inicio,"%H:%M:%S")
-        salida = datetime.strptime(self.hora_finalizacion,"%H:%M:%S")
-        tiempo_total = salida - entrada"""
-        #top_lista = [[("David",10),("Ruben",5),("",0),("",0),("",0),("",11),("",0),("",0),("",0),("",0)],[("Juan",4),("Carlos",2),("",""),("",""),("",""),("",""),("",""),("",""),("",""),("","")],[("rio",80),("pepe",57),("pop",98),("",""),("",""),("",""),("",""),("",""),("",""),("","")]]
-        #top_10 = Creadores.escribir_datos_binary("futoshiki2021top10.dat",top_lista)
+     
+        self.num_seleccionado = ""
         self.bandera= False
+        self.bandera_juego = False
         self.num_partida = rm.randint(0,2)
         self.ventana_jugar = Creadores.crear_ventana("JUGAR",700,700,ventana_principal)
         self.lista_partidas = Creadores.leer_datos_binary("futoshiki2021partidas.dat")
@@ -151,7 +148,7 @@ class Jugar:
         self.btn_num5.place(relx=0.850,rely=0.570,anchor="center")
         #botones inferiores#
         #cuadrado1=crear_cuadrados(self.ventana_jugar,3,3,80,70,"red",0.200,0.750)   
-        self.btn_iniciar_juego =tk.Button(self.ventana_jugar,text="INICIAR""\n""JUEGO",bg="red",activebackground="red",activeforeground="white",relief=GROOVE,cursor="hand2",command=lambda:(self.cuadricula(),self.activar_botones()))
+        self.btn_iniciar_juego =tk.Button(self.ventana_jugar,text="INICIAR""\n""JUEGO",bg="red",activebackground="red",activeforeground="white",relief=GROOVE,cursor="hand2",command=lambda:(self.nombre()))
         self.btn_iniciar_juego.place(relx=0.080,rely=0.675,anchor="center")
         #cuadrado2=crear_cuadrados(self.ventana_jugar,3,3,80,70,"cyan",0.400,0.750)   
         self.btn_borrar_jugada=tk.Button(self.ventana_jugar,text="BORRAR" "\n""JUGADA",bg="cyan",activebackground="cyan",relief=GROOVE,cursor="hand2",state=DISABLED,command=lambda:self.borrar_jugada())
@@ -169,7 +166,9 @@ class Jugar:
         self.btn_cargar_juego = tk.Button(self.ventana_jugar,text="CARGAR JUEGO",state=NORMAL,command=lambda:self.cargar_juego())
         self.btn_cargar_juego.place(relx=0.900,rely=0.900,anchor="center")
         
+        
 #Funcion para agregar el numero al cuadro respectivo, aqui mismo se hacen las validaciones correspondientes
+   
     def num_seleccionador(self,btn):
         
         if self.num_seleccionado !="": 
@@ -181,12 +180,14 @@ class Jugar:
             and self.cuadro_4_1.cget("text") and self.cuadro_4_2.cget("text") and self.cuadro_4_3.cget("text") and self.cuadro_4_4.cget("text") and self.cuadro_4_5.cget("text")\
             and self.cuadro_5_1.cget("text") and self.cuadro_5_2.cget("text") and self.cuadro_5_3.cget("text") and self.cuadro_5_4.cget("text") and self.cuadro_5_5.cget("text") != "":
                 self.hora_finalizacion = time.strftime("%H:%M:%S")
-                
+                self.bandera_juego = True
                 mensaje("FELICITACIONES JUEGO TERMINADO CON EXITO")
-        
+                #self.jugar()
+            
             if self.nivel == "facil":
                 if self.num_partida == 0:
                     if self.cuadro_1_1.cget("text") != "" and self.cuadro_1_2.cget("text") != "" :
+                        
                         if int(self.cuadro_1_1.cget("text")) <= int(self.cuadro_1_2.cget("text")):
                             btn.config(bg="red")
                             mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
@@ -712,11 +713,9 @@ class Jugar:
             self.mins.set(configuracion_datos["minutos"])
             self.hrs= StringVar()
             tk.Label(self.ventana_jugar, textvariable = self.hrs,relief = GROOVE,height=2,width=6).place(relx = 0.100, rely=0.800,anchor= CENTER)
-            self.hrs.set(configuracion_datos["horas"]) 
-
-            secu = 30
+            self.hrs.set(configuracion_datos["horas"])  
             times = int(self.hrs.get())*3600+ int(self.mins.get())*60 + int(self.sec.get())
-            while times > -1:
+            while times > -1 and self.bandera_juego == False:
                 minute,second = (times // 60 , times % 60)
                 hour = 0
                 if minute > 60:
@@ -724,6 +723,7 @@ class Jugar:
                 self.sec.set(second)
                 self.mins.set(minute)
                 self.hrs.set(hour)
+                
                 #Update the time
                 self.ventana_jugar.update()
                 time.sleep(1)
@@ -736,12 +736,27 @@ class Jugar:
                     no_btn = tk.Button(ventana_seguir_jugando,text="NO",command=lambda:self.jugar()).place(relx=0.450,rely= 0.270,anchor=CENTER )
                     si_btn = tk.Button(ventana_seguir_jugando,text="SI",command=lambda:ventana_seguir_jugando.destroy()).place(relx=0.550,rely= 0.270,anchor=CENTER )
                 times -= 1
+            self.ventana_jugar.state(newstate="withdraw")
+            ventana_principal.state(newstate="normal")
+                
     def reloj(self):
         configuracion_datos = Creadores.leer_datos_binary("futoshiki2021configuración.dat")
         if configuracion_datos["reloj"] == "si":
             self.hora_inicio = time.strftime("%H:%M:%S")
-            print(self.hora_inicio)    
+               
+    def nombre(self):
+        if self.nom_jugador.get() == "":
+            mensaje("DIGITE SU NOMBRE PRIMERO")
+            self.ventana_jugar.state(newstate="withdraw")
+            ventana_principal.state(newstate="normal")
+        else:
+            self.cuadricula()
+            self.activar_botones()
+            self.reloj()
+            self.timer()
+            
     def cuadricula(self):
+        
         cuadros_lista = ["","","","","","","","","","","","","","","","","","","","","","","","",""]  
         if self.bandera == True:
             count = 0
@@ -751,12 +766,9 @@ class Jugar:
             self.activar_botones()
         else:
             self.jugadas.clear()
-        if self.nom_jugador.get() == "":
-            mensaje("DIGITE SU NOMBRE PRIMERO")
-            self.ventana_jugar.state(newstate="withdraw")
-            ventana_principal.state(newstate="normal")
+
         self.btn_iniciar_juego.config(state=DISABLED)
-        self.timer(),self.reloj()
+        
         if self.nivel == "facil":
             if self.num_partida == 0:
                 #restricciones horizontales 
@@ -1521,7 +1533,7 @@ class Jugar:
         count=0
         topi=[]
         largo=len(lista)
-        print(largo)
+        
 
         for ind,p in enumerate(lista):
                 top_lista=[]
@@ -1536,7 +1548,7 @@ class Jugar:
     def mostrar_top10(self):
         if self.nom_jugador.get()=="":
          self.ordenar_top_niveles()
-         print(self.consultar_top10()) 
+          
         else:
             self.top_10()
 
@@ -1700,12 +1712,12 @@ class Configuracion:
         configuracion_datos = Creadores.leer_datos_binary("futoshiki2021configuración.dat")
         configuracion_datos["nivel"]= nivel
         configuracion=Creadores.escribir_datos_binary("futoshiki2021configuración.dat",configuracion_datos)
-        print(configuracion_datos)
+        
     def guardar_reloj(self,reloj_opcion):
         configuracion_datos = Creadores.leer_datos_binary("futoshiki2021configuración.dat")
         configuracion_datos["reloj"]=reloj_opcion
         configuracion = Creadores.escribir_datos_binary("futoshiki2021configuración.dat",configuracion_datos)
-        print(configuracion)
+        
     def guardar_horas(self,event):
 
         hrs = int(self.horas.get())
@@ -1714,7 +1726,7 @@ class Configuracion:
             configuracion_datos["timer"] ="si" 
             configuracion_datos["horas"]= hrs
             configuracion = Creadores.escribir_datos_binary("futoshiki2021configuración.dat",configuracion_datos)
-            print(configuracion)
+            
         else:
             mensaje("LAS HORAS DEBEN SER MENORES A 2")
     def guardar_minutos(self,event):
@@ -1724,7 +1736,7 @@ class Configuracion:
             configuracion_datos["timer"]= "si"
             configuracion_datos["minutos"]= min
             configuracion = Creadores.escribir_datos_binary("futoshiki2021configuración.dat",configuracion_datos)
-            print(configuracion)
+            
         else:
             mensaje("LOS MINUTOS DEBEN SER MENORES A 59")
         
@@ -1735,7 +1747,7 @@ class Configuracion:
             configuracion_datos["timer"]= "si"
             configuracion_datos["segundos"]= sec
             configuracion = Creadores.escribir_datos_binary("futoshiki2021configuración.dat",configuracion_datos)
-            print(configuracion)
+            
         else:
             mensaje("LOS SEGUNDOS DEBEN SER MENORES A 59")
         
@@ -1743,7 +1755,7 @@ class Configuracion:
       configuracion_datos = Creadores.leer_datos_binary("futoshiki2021configuración.dat")
       configuracion_datos["posicion"]= posicion
       configuracion=Creadores.escribir_datos_binary("futoshiki2021configuración.dat",configuracion_datos)
-      print(configuracion)
+      
 #Funciones extras 
 class Extras: 
     def ayuda(self):
