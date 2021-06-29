@@ -110,6 +110,7 @@ class Jugar:
         nombre = self.nom_jugador.get() 
         if len(nombre) > 20:
             mensaje("NOMBRE DEBE SER MENOR A 20 CARACTERES")
+            print("eliminame")
             self.nom_jugador.set("")
     
 #Ventana Jugar
