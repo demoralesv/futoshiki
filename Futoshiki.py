@@ -162,7 +162,7 @@ class Jugar:
         self.btn_borrar_juego=tk.Button(self.ventana_jugar,text="BORRAR""\n""JUEGO",bg="light blue",activebackground="light blue",activeforeground="white",relief=GROOVE,cursor="hand2",state=DISABLED,command= lambda:self.pantalla_borrar_juego())
         self.btn_borrar_juego.place(relx=0.680,rely=0.675,anchor="center")
         #cuadrado5=crear_cuadrados(self.ventana_jugar,3,3,80,70,"yellow",0.999,0.750) 
-        btn_top=tk.Button(self.ventana_jugar,text="TOP""\n""10",bg="yellow",activebackground="yellow",relief="raised",cursor="hand2",command= lambda:self.top_10()).place(relx=0.880,rely=0.675,anchor="center")
+        btn_top=tk.Button(self.ventana_jugar,text="TOP""\n""10",bg="yellow",activebackground="yellow",relief="raised",cursor="hand2",command= lambda:self.mostrar_top10().place(relx=0.880,rely=0.675,anchor="center")
         self.btn_guardar_juego = tk.Button(self.ventana_jugar,text="GUARDAR JUEGO",state=DISABLED,command=lambda:self.guardar_juego())
         self.btn_guardar_juego.place(relx=0.700,rely=0.900,anchor="center")
         self.btn_cargar_juego = tk.Button(self.ventana_jugar,text="CARGAR JUEGO",state=NORMAL,command=lambda:self.cargar_juego())
@@ -1489,6 +1489,18 @@ class Jugar:
     def borrar_juego(self):
         self.jugadas.clear()
         self.cuadricula()
+    def mostrar_top10(self):
+        if self.nom_jugador.get()=="":
+         lista=self.consultar_top10
+         print(lista) 
+        else:
+            self.top_10()
+
+
+    def consultar_top10(self):
+        top10_List = Creadores.leer_datos_binary("futoshiki2021top10.dat")
+        return top10_List
+
     def top_10(self):
         
         if self.hora_inicio != "" and self.hora_finalizacion != "":
