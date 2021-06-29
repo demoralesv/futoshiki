@@ -14,6 +14,7 @@ from datetime import date, datetime
 import time
 import tkinter.font as tkfont
 import random as rm
+
 class Jugar:
     ventana_jugar = ""
     nom_jugador = ""
@@ -99,7 +100,7 @@ class Jugar:
         try:
             borrado = self.jugadas.pop()
             borrado.config(text="")
-           
+            
         except IndexError:
             mensaje("NO HAY MAS JUGADAS PARA ELIMINAR")
  #Funcion para agregar la jugada 
@@ -110,8 +111,16 @@ class Jugar:
         if len(nombre) > 20:
             mensaje("NOMBRE DEBE SER MENOR A 20 CARACTERES")
             self.nom_jugador.set("")
+    
 #Ventana Jugar
     def jugar(self):
+        """self.hora_inicio = time.strftime("%H:%M:%S")
+        self.hora_finalizacion = time.strftime("%H:%M:%S")
+        entrada = datetime.strptime(self.hora_inicio,"%H:%M:%S")
+        salida = datetime.strptime(self.hora_finalizacion,"%H:%M:%S")
+        tiempo_total = salida - entrada"""
+        #top_lista = [[("David",10),("Ruben",5),("",0),("",0),("",0),("",11),("",0),("",0),("",0),("",0)],[("Juan",4),("Carlos",2),("",""),("",""),("",""),("",""),("",""),("",""),("",""),("","")],[("rio",80),("pepe",57),("pop",98),("",""),("",""),("",""),("",""),("",""),("",""),("","")]]
+        #top_10 = Creadores.escribir_datos_binary("futoshiki2021top10.dat",top_lista)
         self.bandera= False
         self.num_partida = rm.randint(0,2)
         self.ventana_jugar = Creadores.crear_ventana("JUGAR",700,700,ventana_principal)
@@ -1484,24 +1493,65 @@ class Jugar:
     def borrar_juego(self):
         self.jugadas.clear()
         self.cuadricula()
+
+    def consultar_top10(self):
+        self.top10_List = Creadores.leer_datos_binary("futoshiki2021top10.dat")
+        return self.top10_List
+
+    def ordenar_top_niveles(self):
+        self.consultar_top10()
+        if self.nivel == "facil":
+            top_facil_List=self.top10_List[0]
+            top_lista_ordenada= self.ordenar_top(top_facil_List)
+            self.top10_List[0] = top_lista_ordenada
+            Creadores.escribir_datos_binary("futoshiki2021top10.dat",self.top10_List)
+        if self.nivel == "intermedio":
+            top_intermedio_List=self.top10_List[1]
+            top_lista_ordenada= self.ordenar_top(top_intermedio_List)
+            self.top10_List[1] = top_lista_ordenada
+            Creadores.escribir_datos_binary("futoshiki2021top10.dat",self.top10_List)
+        if self.nivel == "dificil":
+            top_dificil_List=self.top10_List[2]
+            top_lista_ordenada= self.ordenar_top(top_dificil_List)
+            self.top10_List[2] = top_lista_ordenada
+            Creadores.escribir_datos_binary("futoshiki2021top10.dat",self.top10_List)
+
+    def ordenar_top(self,lista):
+        count=0
+        topi=[]
+        largo=len(lista)
+        print(largo)
+
+        for ind,p in enumerate(lista):
+                top_lista=[]
+                top_lista.insert(0,lista[count][0])
+                top_lista.insert(1,lista[count][1])
+                topi.insert(count,tuple(top_lista))
+                count +=1  
+        top_sorted = sorted(topi, key=lambda tupla: tupla[1])   
+        top_lista = top_sorted[:10]  
+        return top_lista
+
     def mostrar_top10(self):
         if self.nom_jugador.get()=="":
-         lista=self.consultar_top10
-         print(lista) 
+         self.ordenar_top_niveles()
+         print(self.consultar_top10()) 
         else:
             self.top_10()
 
-
-    def consultar_top10(self):
-        top10_List = Creadores.leer_datos_binary("futoshiki2021top10.dat")
-        return top10_List
-
-    def top_10(self):
-        
-        if self.hora_inicio != "" and self.hora_finalizacion != "":
+    def insert_top_10(self):
+       
             entrada = datetime.strptime(self.hora_inicio,"%H:%M:%S")
+            """ 
             salida = datetime.strptime(self.hora_finalizacion,"%H:%M:%S")
             tiempo_total = salida - entrada
+            top1_nombre = self.nom_jugador.get()
+            top1_tiempo = tiempo_total
+
+            self.top10_List[0] = top_lista_ordenada
+            Creadores.escribir_datos_binary("futoshiki2021top10.dat",self.top10_List)
+        
+        
         ventana_top = Creadores.crear_ventana("TOP 10",1000,500,ventana_principal)
         top_10_label= tk.Label(ventana_top,text="TOP 10").place(relx=0.500,rely=0.050,anchor=CENTER)
         top_facil_label = tk.Label(ventana_top,text="NIVEL FACIL").place(relx=0.100,rely=0.100,anchor=CENTER)
@@ -1516,21 +1566,21 @@ class Jugar:
             top_facil = [("",""),("",""),("",""),("",""),("",""),("",""),("",""),("",""),("",""),("","")]
             top = Creadores.leer_datos_binary("futoshiki2021top10.dat")
             
-            top1_nombre = "1-" + self.nom_jugador.get()
+            top1_nombre = self.nom_jugador.get()
             #top1_tiempo = tiempo_total
             
-            top.insert([0][0],top1_nombre)
-            """top.insert([0][2],"")
-            top.insert([0][3],"")
-            top.insert([0][4],"")
-            top.insert([0][5],"")"""
+            top_lista[0] = top_facil)
+            #top.insert([0][2],"")
+            #top.insert([0][3],"")
+            #top.insert([0][4],"")
+            #top.insert([0][5],"")
             to = Creadores.escribir_datos_binary("futoshiki2021top10.dat",top)
             top_label = tk.Label(ventana_top,text=top[0][0]).place(relx=0.050,rely=0.200,anchor=CENTER)
         if self.nivel == "intermedio":
             pass
         if self.nivel == "dificil":
-            pass
-
+            pass"""
+        
         #top = Creadores.escribir_datos_binary("futoshiki2021top10.dat",top_lista)
 # esta funcion es la restriccion para los numeros fijos en la cuadricula
     def numero_fijo(self,btn): 
