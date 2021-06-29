@@ -27,9 +27,12 @@ class Jugar:
     partida = {}
     jugadas = []
     bandera = False
+    bandera_timer = False
     sec = ""
     min = ""
     hrs = "" 
+    hora_inicio = ""
+    hora_finalizacion = ""
  
     def __init__(self):
         self.btn_num1 = ""
@@ -57,6 +60,7 @@ class Jugar:
         self.res_ver8 = tk.Label()
         self.res_ver9 = tk.Label()
         self.bandera = False
+        self.num_seleccionado = ""
  #funcion que selecciona y deselecciona los digitos
     def toggle(self,num):
         self.num_seleccionado= num
@@ -146,7 +150,7 @@ class Jugar:
         self.btn_num5.place(relx=0.850,rely=0.570,anchor="center")
         #botones inferiores#
         #cuadrado1=crear_cuadrados(self.ventana_jugar,3,3,80,70,"red",0.200,0.750)   
-        self.btn_iniciar_juego =tk.Button(self.ventana_jugar,text="INICIAR""\n""JUEGO",bg="red",activebackground="red",activeforeground="white",relief=GROOVE,cursor="hand2",command=lambda:(self.cuadricula(),self.activar_botones(),self.timer()))
+        self.btn_iniciar_juego =tk.Button(self.ventana_jugar,text="INICIAR""\n""JUEGO",bg="red",activebackground="red",activeforeground="white",relief=GROOVE,cursor="hand2",command=lambda:(self.cuadricula(),self.activar_botones(),self.timer(),self.reloj()))
         self.btn_iniciar_juego.place(relx=0.080,rely=0.675,anchor="center")
         #cuadrado2=crear_cuadrados(self.ventana_jugar,3,3,80,70,"cyan",0.400,0.750)   
         self.btn_borrar_jugada=tk.Button(self.ventana_jugar,text="BORRAR" "\n""JUGADA",bg="cyan",activebackground="cyan",relief=GROOVE,cursor="hand2",state=DISABLED,command=lambda:self.borrar_jugada())
@@ -163,562 +167,576 @@ class Jugar:
         self.btn_guardar_juego.place(relx=0.700,rely=0.900,anchor="center")
         self.btn_cargar_juego = tk.Button(self.ventana_jugar,text="CARGAR JUEGO",state=NORMAL,command=lambda:self.cargar_juego())
         self.btn_cargar_juego.place(relx=0.900,rely=0.900,anchor="center")
-        #label del timer 
-        horas_label = tk.Label(self.ventana_jugar,text="Horas",relief= GROOVE, bg = "#f0f0ed",height=2,width=6).place(relx=0.100,rely = 0.750,anchor = CENTER)
-        minutos_label = tk.Label(self.ventana_jugar,text="Minutos",relief= GROOVE, bg = "#f0f0ed",height=2,width=8).place(relx=0.180,rely = 0.750,anchor = CENTER)
-        segundos_label= tk.Label(self.ventana_jugar,text="Segundos",relief= GROOVE, bg = "#f0f0ed",height=2,width=8).place(relx=0.270,rely = 0.750,anchor = CENTER)
+        
 #Funcion para agregar el numero al cuadro respectivo, aqui mismo se hacen las validaciones correspondientes
     def num_seleccionador(self,btn):
-        self.agregar_jugada(btn)
-        btn.config(text=self.num_seleccionado)
-        if self.cuadro_1_1.cget("text") and self.cuadro_1_2.cget("text") and self.cuadro_1_3.cget("text") and self.cuadro_1_4.cget("text") and self.cuadro_1_5.cget("text")\
+        
+        if self.num_seleccionado !="": 
+            self.agregar_jugada(btn)
+            btn.config(text=self.num_seleccionado)
+            if self.cuadro_1_1.cget("text") and self.cuadro_1_2.cget("text") and self.cuadro_1_3.cget("text") and self.cuadro_1_4.cget("text") and self.cuadro_1_5.cget("text")\
             and self.cuadro_2_1.cget("text") and self.cuadro_2_2.cget("text") and self.cuadro_2_3.cget("text") and self.cuadro_2_4.cget("text") and self.cuadro_2_5.cget("text")\
             and self.cuadro_3_1.cget("text")  and self.cuadro_3_2.cget("text") and self.cuadro_3_3.cget("text") and self.cuadro_3_4.cget("text") and self.cuadro_3_5.cget("text")\
             and self.cuadro_4_1.cget("text") and self.cuadro_4_2.cget("text") and self.cuadro_4_3.cget("text") and self.cuadro_4_4.cget("text") and self.cuadro_4_5.cget("text")\
             and self.cuadro_5_1.cget("text") and self.cuadro_5_2.cget("text") and self.cuadro_5_3.cget("text") and self.cuadro_5_4.cget("text") and self.cuadro_5_5.cget("text") != "":
+                self.hora_finalizacion = time.strftime("%H:%M:%S")
+                
                 mensaje("FELICITACIONES JUEGO TERMINADO CON EXITO")
         
-        if self.nivel == "facil":
-            if self.num_partida == 0:
-                if self.cuadro_1_1.cget("text") != "" and self.cuadro_1_2.cget("text") != "" :
-                    if int(self.cuadro_1_1.cget("text")) < int(self.cuadro_1_2.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_1_3.cget("text") != "" and self.cuadro_1_4.cget("text") != "" :
-                    if int(self.cuadro_1_3.cget("text")) < int(self.cuadro_1_4.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_1_4.cget("text") != "" and self.cuadro_1_5.cget("text") != "" :
-                    if int(self.cuadro_1_4.cget("text")) < int(self.cuadro_1_5.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_4_4.cget("text") != "" and self.cuadro_4_5.cget("text") != "" :
-                    if int(self.cuadro_4_4.cget("text")) > int(self.cuadro_4_5.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_5_4.cget("text") != "" and self.cuadro_5_5.cget("text") != "" :
-                    if int(self.cuadro_5_4.cget("text")) < int(self.cuadro_5_5.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-            if self.num_partida == 2:
-                if self.cuadro_1_1.cget("text") != "" and self.cuadro_2_1.cget("text") != "" :
-                    if int(self.cuadro_1_1.cget("text")) < int(self.cuadro_2_1.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_1_4.cget("text") != "" and self.cuadro_1_5.cget("text") != "" :
-                    if int(self.cuadro_1_4.cget("text")) < int(self.cuadro_1_5.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_2_1.cget("text") != "" and self.cuadro_2_2.cget("text") != "" :
-                    if int(self.cuadro_2_1.cget("text")) < int(self.cuadro_2_2.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_2_4.cget("text") != "" and self.cuadro_2_5.cget("text") != "" :
-                    if int(self.cuadro_2_4.cget("text")) < int(self.cuadro_2_5.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_3_5.cget("text") != "" and self.cuadro_4_5.cget("text") != "" :
-                    if int(self.cuadro_3_5.cget("text")) < int(self.cuadro_4_5.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_4_2.cget("text") != "" and self.cuadro_4_3.cget("text") != "" :
-                    if int(self.cuadro_4_2.cget("text")) > int(self.cuadro_4_3.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_4_4.cget("text") != "" and self.cuadro_4_5.cget("text") != "" :
-                    if int(self.cuadro_4_4.cget("text")) < int(self.cuadro_4_5.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_5_1.cget("text") != "" and self.cuadro_5_2.cget("text") != "" :
-                    if int(self.cuadro_5_1.cget("text")) < int(self.cuadro_5_2.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-            if self.num_partida == 1:
-                if self.cuadro_2_1.cget("text") != "" and self.cuadro_3_1.cget("text") != "" :
-                    if int(self.cuadro_2_1.cget("text")) < int(self.cuadro_3_1.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_3_2.cget("text") != "" and self.cuadro_3_3.cget("text") != "" :
-                    if int(self.cuadro_3_2.cget("text")) < int(self.cuadro_3_3.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_3_2.cget("text") != "" and self.cuadro_4_2.cget("text") != "" :
-                    if int(self.cuadro_3_2.cget("text")) < int(self.cuadro_4_2.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_4_2.cget("text") != "" and self.cuadro_4_3.cget("text") != "" :
-                    if int(self.cuadro_4_2.cget("text")) < int(self.cuadro_4_3.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_4_4.cget("text") != "" and self.cuadro_4_5.cget("text") != "" :
-                    if int(self.cuadro_4_4.cget("text")) > int(self.cuadro_4_5.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_5_1.cget("text") != "" and self.cuadro_5_2.cget("text") != "" :
-                    if int(self.cuadro_5_1.cget("text")) < int(self.cuadro_5_2.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-        if self.nivel == "intermedio":
-            if self.num_partida == 0:
-                if self.cuadro_1_1.cget("text") != "" and self.cuadro_1_2.cget("text") != "" :
-                    if int(self.cuadro_1_1.cget("text")) <= int(self.cuadro_1_2.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_1_4.cget("text") != "" and self.cuadro_1_5.cget("text") != "" :
-                    if int(self.cuadro_1_4.cget("text")) >= int(self.cuadro_1_5.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_2_5.cget("text") != "" and self.cuadro_3_5.cget("text") != "" :
-                    if int(self.cuadro_2_5.cget("text")) >= int(self.cuadro_3_5.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_3_2.cget("text") != "" and self.cuadro_3_3.cget("text") != "" :
-                    if int(self.cuadro_3_2.cget("text")) >= int(self.cuadro_3_3.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_3_5.cget("text") != "" and self.cuadro_4_5.cget("text") != "" :
-                    if int(self.cuadro_3_5.cget("text")) >= int(self.cuadro_4_5.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_4_3.cget("text") != "" and self.cuadro_4_4.cget("text") != "" :
-                    if int(self.cuadro_4_3.cget("text")) <= int(self.cuadro_4_4.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_4_5.cget("text") != "" and self.cuadro_5_5.cget("text") != "" :
-                    if int(self.cuadro_4_5.cget("text")) <= int(self.cuadro_5_5.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_5_1.cget("text") != "" and self.cuadro_5_2.cget("text") != "" :
-                    if int(self.cuadro_5_1.cget("text")) <= int(self.cuadro_5_2.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_5_4.cget("text") != "" and self.cuadro_5_5.cget("text") != "" :
-                    if int(self.cuadro_5_4.cget("text")) >= int(self.cuadro_5_5.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-            if self.num_partida == 1:
-                if self.cuadro_1_1.cget("text") != "" and self.cuadro_1_2.cget("text") != "" :
-                    if int(self.cuadro_1_1.cget("text")) <= int(self.cuadro_1_2.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_1_4.cget("text") != "" and self.cuadro_1_5.cget("text") != "" :
-                    if int(self.cuadro_1_4.cget("text")) >= int(self.cuadro_1_5.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_1_5.cget("text") != "" and self.cuadro_2_5.cget("text") != "" :
-                    if int(self.cuadro_1_5.cget("text")) >= int(self.cuadro_2_5.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_2_1.cget("text") != "" and self.cuadro_2_2.cget("text") != "" :
-                    if int(self.cuadro_2_1.cget("text")) <= int(self.cuadro_2_2.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_3_2.cget("text") != "" and self.cuadro_3_3.cget("text") != "" :
-                    if int(self.cuadro_3_2.cget("text")) >= int(self.cuadro_3_3.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_4_2.cget("text") != "" and self.cuadro_4_3.cget("text") != "" :
-                    if int(self.cuadro_4_2.cget("text")) <= int(self.cuadro_4_3.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_4_3.cget("text") != "" and self.cuadro_5_3.cget("text") != "" :
-                    if int(self.cuadro_4_3.cget("text")) <= int(self.cuadro_5_3.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_5_4.cget("text") != "" and self.cuadro_5_5.cget("text") != "" :
-                    if int(self.cuadro_5_4.cget("text")) <= int(self.cuadro_5_5.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-            if self.num_partida == 2:
-                if self.cuadro_1_1.cget("text") != "" and self.cuadro_2_1.cget("text") != "" :
-                    if int(self.cuadro_1_1.cget("text")) >= int(self.cuadro_2_1.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_1_3.cget("text") != "" and self.cuadro_1_4.cget("text") != "" :
-                    if int(self.cuadro_1_3.cget("text")) <= int(self.cuadro_1_4.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_1_4.cget("text") != "" and self.cuadro_1_5.cget("text") != "" :
-                    if int(self.cuadro_1_4.cget("text")) >= int(self.cuadro_1_5.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_2_1.cget("text") != "" and self.cuadro_2_2.cget("text") != "" :
-                    if int(self.cuadro_2_1.cget("text")) <= int(self.cuadro_2_2.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_4_2.cget("text") != "" and self.cuadro_5_2.cget("text") != "" :
-                    if int(self.cuadro_4_2.cget("text")) >= int(self.cuadro_5_2.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_4_3.cget("text") != "" and self.cuadro_5_3.cget("text") != "" :
-                    if int(self.cuadro_4_3.cget("text")) <= int(self.cuadro_5_3.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_5_1.cget("text") != "" and self.cuadro_5_2.cget("text") != "" :
-                    if int(self.cuadro_5_1.cget("text")) >= int(self.cuadro_5_2.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_5_4.cget("text") != "" and self.cuadro_5_5.cget("text") != "" :
-                    if int(self.cuadro_5_4.cget("text")) <= int(self.cuadro_5_5.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-        if self.nivel == "dificil":
-            if self.num_partida == 0:
-                if self.cuadro_1_1.cget("text") != "" and self.cuadro_1_2.cget("text") != "" :
-                    if int(self.cuadro_1_1.cget("text")) < int(self.cuadro_1_2.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_1_2.cget("text") != "" and self.cuadro_2_2.cget("text") != "" :
-                    if int(self.cuadro_1_2.cget("text")) > int(self.cuadro_2_2.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_1_4.cget("text") != "" and self.cuadro_2_4.cget("text") != "" :
-                    if int(self.cuadro_1_4.cget("text")) > int(self.cuadro_2_4.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_2_1.cget("text") != "" and self.cuadro_3_1.cget("text") != "" :
-                    if int(self.cuadro_2_1.cget("text")) < int(self.cuadro_3_1.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_3_3.cget("text") != "" and self.cuadro_3_4.cget("text") != "" :
-                    if int(self.cuadro_3_3.cget("text")) > int(self.cuadro_3_4.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_3_2.cget("text") != "" and self.cuadro_4_2.cget("text") != "" :
-                    if int(self.cuadro_3_2.cget("text")) < int(self.cuadro_4_2.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_4_1.cget("text") != "" and self.cuadro_5_1.cget("text") != "" :
-                    if int(self.cuadro_4_1.cget("text")) > int(self.cuadro_5_1.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_5_2.cget("text") != "" and self.cuadro_5_3.cget("text") != "" :
-                    if int(self.cuadro_5_2.cget("text")) < int(self.cuadro_5_3.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_5_3.cget("text") != "" and self.cuadro_5_4.cget("text") != "" :
-                    if int(self.cuadro_5_3.cget("text")) > int(self.cuadro_5_4.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-            if self.num_partida == 1:
-                if self.cuadro_1_1.cget("text") != "" and self.cuadro_1_2.cget("text") != "" :
-                    if int(self.cuadro_1_1.cget("text")) < int(self.cuadro_1_2.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_1_3.cget("text") != "" and self.cuadro_1_4.cget("text") != "" :
-                    if int(self.cuadro_1_3.cget("text")) < int(self.cuadro_1_4.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_1_2.cget("text") != "" and self.cuadro_2_2.cget("text") != "" :
-                    if int(self.cuadro_1_2.cget("text")) > int(self.cuadro_2_2.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_3_2.cget("text") != "" and self.cuadro_3_3.cget("text") != "" :
-                    if int(self.cuadro_3_2.cget("text")) > int(self.cuadro_3_3.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_3_2.cget("text") != "" and self.cuadro_4_2.cget("text") != "" :
-                    if int(self.cuadro_3_2.cget("text")) < int(self.cuadro_4_2.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_4_4.cget("text") != "" and self.cuadro_4_5.cget("text") != "" :
-                    if int(self.cuadro_4_4.cget("text")) < int(self.cuadro_4_5.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_4_1.cget("text") != "" and self.cuadro_5_1.cget("text") != "" :
-                    if int(self.cuadro_4_1.cget("text")) < int(self.cuadro_5_1.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_5_2.cget("text") != "" and self.cuadro_5_3.cget("text") != "" :
-                    if int(self.cuadro_5_2.cget("text")) < int(self.cuadro_5_3.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-            if self.num_partida == 2:
-                if self.cuadro_1_1.cget("text") != "" and self.cuadro_2_1.cget("text") != "" :
-                    if int(self.cuadro_1_1.cget("text")) < int(self.cuadro_2_1.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_1_2.cget("text") != "" and self.cuadro_2_2.cget("text") != "" :
-                    if int(self.cuadro_1_2.cget("text")) > int(self.cuadro_2_2.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_1_3.cget("text") != "" and self.cuadro_1_4.cget("text") != "" :
-                    if int(self.cuadro_1_3.cget("text")) < int(self.cuadro_1_4.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_1_4.cget("text") != "" and self.cuadro_1_5.cget("text") != "" :
-                    if int(self.cuadro_1_4.cget("text")) < int(self.cuadro_1_5.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_3_2.cget("text") != "" and self.cuadro_4_2.cget("text") != "" :
-                    if int(self.cuadro_3_2.cget("text")) < int(self.cuadro_4_2.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_3_4.cget("text") != "" and self.cuadro_3_5.cget("text") != "" :
-                    if int(self.cuadro_3_4.cget("text")) < int(self.cuadro_3_5.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_4_4.cget("text") != "" and self.cuadro_4_5.cget("text") != "" :
-                    if int(self.cuadro_4_4.cget("text")) > int(self.cuadro_4_5.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_4_2.cget("text") != "" and self.cuadro_5_2.cget("text") != "" :
-                    if int(self.cuadro_4_2.cget("text")) < int(self.cuadro_5_2.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_5_2.cget("text") != "" and self.cuadro_5_3.cget("text") != "" :
-                    if int(self.cuadro_5_2.cget("text")) < int(self.cuadro_5_3.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
-                if self.cuadro_4_5.cget("text") != "" and self.cuadro_5_5.cget("text") != "" :
-                    if int(self.cuadro_4_5.cget("text")) > int(self.cuadro_5_5.cget("text")):
-                        btn.config(bg="red")
-                        mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
-                        btn.config(bg="#f0f0ed")
-                        btn.config(text="")
-                        self.borrar_jugada()
+            if self.nivel == "facil":
+                if self.num_partida == 0:
+                    if self.cuadro_1_1.cget("text") != "" and self.cuadro_1_2.cget("text") != "" :
+                        if int(self.cuadro_1_1.cget("text")) < int(self.cuadro_1_2.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_1_3.cget("text") != "" and self.cuadro_1_4.cget("text") != "" :
+                        if int(self.cuadro_1_3.cget("text")) < int(self.cuadro_1_4.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_1_4.cget("text") != "" and self.cuadro_1_5.cget("text") != "" :
+                        if int(self.cuadro_1_4.cget("text")) < int(self.cuadro_1_5.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_4_4.cget("text") != "" and self.cuadro_4_5.cget("text") != "" :
+                        if int(self.cuadro_4_4.cget("text")) > int(self.cuadro_4_5.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_5_4.cget("text") != "" and self.cuadro_5_5.cget("text") != "" :
+                        if int(self.cuadro_5_4.cget("text")) < int(self.cuadro_5_5.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                if self.num_partida == 2:
+                    if self.cuadro_1_1.cget("text") != "" and self.cuadro_2_1.cget("text") != "" :
+                        if int(self.cuadro_1_1.cget("text")) < int(self.cuadro_2_1.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_1_4.cget("text") != "" and self.cuadro_1_5.cget("text") != "" :
+                        if int(self.cuadro_1_4.cget("text")) < int(self.cuadro_1_5.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_2_1.cget("text") != "" and self.cuadro_2_2.cget("text") != "" :
+                        if int(self.cuadro_2_1.cget("text")) < int(self.cuadro_2_2.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_2_4.cget("text") != "" and self.cuadro_2_5.cget("text") != "" :
+                        if int(self.cuadro_2_4.cget("text")) < int(self.cuadro_2_5.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_3_5.cget("text") != "" and self.cuadro_4_5.cget("text") != "" :
+                        if int(self.cuadro_3_5.cget("text")) < int(self.cuadro_4_5.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_4_2.cget("text") != "" and self.cuadro_4_3.cget("text") != "" :
+                        if int(self.cuadro_4_2.cget("text")) > int(self.cuadro_4_3.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_4_4.cget("text") != "" and self.cuadro_4_5.cget("text") != "" :
+                        if int(self.cuadro_4_4.cget("text")) < int(self.cuadro_4_5.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_5_1.cget("text") != "" and self.cuadro_5_2.cget("text") != "" :
+                        if int(self.cuadro_5_1.cget("text")) < int(self.cuadro_5_2.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                if self.num_partida == 1:
+                    if self.cuadro_2_1.cget("text") != "" and self.cuadro_3_1.cget("text") != "" :
+                        if int(self.cuadro_2_1.cget("text")) < int(self.cuadro_3_1.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_3_2.cget("text") != "" and self.cuadro_3_3.cget("text") != "" :
+                        if int(self.cuadro_3_2.cget("text")) < int(self.cuadro_3_3.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_3_2.cget("text") != "" and self.cuadro_4_2.cget("text") != "" :
+                        if int(self.cuadro_3_2.cget("text")) < int(self.cuadro_4_2.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_4_2.cget("text") != "" and self.cuadro_4_3.cget("text") != "" :
+                        if int(self.cuadro_4_2.cget("text")) < int(self.cuadro_4_3.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_4_4.cget("text") != "" and self.cuadro_4_5.cget("text") != "" :
+                        if int(self.cuadro_4_4.cget("text")) > int(self.cuadro_4_5.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_5_1.cget("text") != "" and self.cuadro_5_2.cget("text") != "" :
+                        if int(self.cuadro_5_1.cget("text")) < int(self.cuadro_5_2.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+            if self.nivel == "intermedio":
+                if self.num_partida == 0:
+                    if self.cuadro_1_1.cget("text") != "" and self.cuadro_1_2.cget("text") != "" :
+                        if int(self.cuadro_1_1.cget("text")) <= int(self.cuadro_1_2.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_1_4.cget("text") != "" and self.cuadro_1_5.cget("text") != "" :
+                        if int(self.cuadro_1_4.cget("text")) >= int(self.cuadro_1_5.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_2_5.cget("text") != "" and self.cuadro_3_5.cget("text") != "" :
+                        if int(self.cuadro_2_5.cget("text")) >= int(self.cuadro_3_5.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_3_2.cget("text") != "" and self.cuadro_3_3.cget("text") != "" :
+                        if int(self.cuadro_3_2.cget("text")) >= int(self.cuadro_3_3.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_3_5.cget("text") != "" and self.cuadro_4_5.cget("text") != "" :
+                        if int(self.cuadro_3_5.cget("text")) >= int(self.cuadro_4_5.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_4_3.cget("text") != "" and self.cuadro_4_4.cget("text") != "" :
+                        if int(self.cuadro_4_3.cget("text")) <= int(self.cuadro_4_4.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_4_5.cget("text") != "" and self.cuadro_5_5.cget("text") != "" :
+                        if int(self.cuadro_4_5.cget("text")) <= int(self.cuadro_5_5.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_5_1.cget("text") != "" and self.cuadro_5_2.cget("text") != "" :
+                        if int(self.cuadro_5_1.cget("text")) <= int(self.cuadro_5_2.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_5_4.cget("text") != "" and self.cuadro_5_5.cget("text") != "" :
+                        if int(self.cuadro_5_4.cget("text")) >= int(self.cuadro_5_5.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                if self.num_partida == 1:
+                    if self.cuadro_1_1.cget("text") != "" and self.cuadro_1_2.cget("text") != "" :
+                        if int(self.cuadro_1_1.cget("text")) <= int(self.cuadro_1_2.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_1_4.cget("text") != "" and self.cuadro_1_5.cget("text") != "" :
+                        if int(self.cuadro_1_4.cget("text")) >= int(self.cuadro_1_5.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_1_5.cget("text") != "" and self.cuadro_2_5.cget("text") != "" :
+                        if int(self.cuadro_1_5.cget("text")) >= int(self.cuadro_2_5.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_2_1.cget("text") != "" and self.cuadro_2_2.cget("text") != "" :
+                        if int(self.cuadro_2_1.cget("text")) <= int(self.cuadro_2_2.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_3_2.cget("text") != "" and self.cuadro_3_3.cget("text") != "" :
+                        if int(self.cuadro_3_2.cget("text")) >= int(self.cuadro_3_3.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_4_2.cget("text") != "" and self.cuadro_4_3.cget("text") != "" :
+                        if int(self.cuadro_4_2.cget("text")) <= int(self.cuadro_4_3.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_4_3.cget("text") != "" and self.cuadro_5_3.cget("text") != "" :
+                        if int(self.cuadro_4_3.cget("text")) <= int(self.cuadro_5_3.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_5_4.cget("text") != "" and self.cuadro_5_5.cget("text") != "" :
+                        if int(self.cuadro_5_4.cget("text")) <= int(self.cuadro_5_5.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                if self.num_partida == 2:
+                    if self.cuadro_1_1.cget("text") != "" and self.cuadro_2_1.cget("text") != "" :
+                        if int(self.cuadro_1_1.cget("text")) >= int(self.cuadro_2_1.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_1_3.cget("text") != "" and self.cuadro_1_4.cget("text") != "" :
+                        if int(self.cuadro_1_3.cget("text")) <= int(self.cuadro_1_4.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_1_4.cget("text") != "" and self.cuadro_1_5.cget("text") != "" :
+                        if int(self.cuadro_1_4.cget("text")) >= int(self.cuadro_1_5.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_2_1.cget("text") != "" and self.cuadro_2_2.cget("text") != "" :
+                        if int(self.cuadro_2_1.cget("text")) <= int(self.cuadro_2_2.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_4_2.cget("text") != "" and self.cuadro_5_2.cget("text") != "" :
+                        if int(self.cuadro_4_2.cget("text")) >= int(self.cuadro_5_2.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_4_3.cget("text") != "" and self.cuadro_5_3.cget("text") != "" :
+                        if int(self.cuadro_4_3.cget("text")) <= int(self.cuadro_5_3.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_5_1.cget("text") != "" and self.cuadro_5_2.cget("text") != "" :
+                        if int(self.cuadro_5_1.cget("text")) >= int(self.cuadro_5_2.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_5_4.cget("text") != "" and self.cuadro_5_5.cget("text") != "" :
+                        if int(self.cuadro_5_4.cget("text")) <= int(self.cuadro_5_5.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+            if self.nivel == "dificil":
+                if self.num_partida == 0:
+                    if self.cuadro_1_1.cget("text") != "" and self.cuadro_1_2.cget("text") != "" :
+                        if int(self.cuadro_1_1.cget("text")) < int(self.cuadro_1_2.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_1_2.cget("text") != "" and self.cuadro_2_2.cget("text") != "" :
+                        if int(self.cuadro_1_2.cget("text")) > int(self.cuadro_2_2.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_1_4.cget("text") != "" and self.cuadro_2_4.cget("text") != "" :
+                        if int(self.cuadro_1_4.cget("text")) > int(self.cuadro_2_4.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_2_1.cget("text") != "" and self.cuadro_3_1.cget("text") != "" :
+                        if int(self.cuadro_2_1.cget("text")) < int(self.cuadro_3_1.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_3_3.cget("text") != "" and self.cuadro_3_4.cget("text") != "" :
+                        if int(self.cuadro_3_3.cget("text")) > int(self.cuadro_3_4.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_3_2.cget("text") != "" and self.cuadro_4_2.cget("text") != "" :
+                        if int(self.cuadro_3_2.cget("text")) < int(self.cuadro_4_2.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_4_1.cget("text") != "" and self.cuadro_5_1.cget("text") != "" :
+                        if int(self.cuadro_4_1.cget("text")) > int(self.cuadro_5_1.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_5_2.cget("text") != "" and self.cuadro_5_3.cget("text") != "" :
+                        if int(self.cuadro_5_2.cget("text")) < int(self.cuadro_5_3.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_5_3.cget("text") != "" and self.cuadro_5_4.cget("text") != "" :
+                        if int(self.cuadro_5_3.cget("text")) > int(self.cuadro_5_4.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                if self.num_partida == 1:
+                    if self.cuadro_1_1.cget("text") != "" and self.cuadro_1_2.cget("text") != "" :
+                        if int(self.cuadro_1_1.cget("text")) < int(self.cuadro_1_2.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_1_3.cget("text") != "" and self.cuadro_1_4.cget("text") != "" :
+                        if int(self.cuadro_1_3.cget("text")) < int(self.cuadro_1_4.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_1_2.cget("text") != "" and self.cuadro_2_2.cget("text") != "" :
+                        if int(self.cuadro_1_2.cget("text")) > int(self.cuadro_2_2.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_3_2.cget("text") != "" and self.cuadro_3_3.cget("text") != "" :
+                        if int(self.cuadro_3_2.cget("text")) > int(self.cuadro_3_3.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_3_2.cget("text") != "" and self.cuadro_4_2.cget("text") != "" :
+                        if int(self.cuadro_3_2.cget("text")) < int(self.cuadro_4_2.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_4_4.cget("text") != "" and self.cuadro_4_5.cget("text") != "" :
+                        if int(self.cuadro_4_4.cget("text")) < int(self.cuadro_4_5.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_4_1.cget("text") != "" and self.cuadro_5_1.cget("text") != "" :
+                        if int(self.cuadro_4_1.cget("text")) < int(self.cuadro_5_1.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_5_2.cget("text") != "" and self.cuadro_5_3.cget("text") != "" :
+                        if int(self.cuadro_5_2.cget("text")) < int(self.cuadro_5_3.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                if self.num_partida == 2:
+                    if self.cuadro_1_1.cget("text") != "" and self.cuadro_2_1.cget("text") != "" :
+                        if int(self.cuadro_1_1.cget("text")) < int(self.cuadro_2_1.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_1_2.cget("text") != "" and self.cuadro_2_2.cget("text") != "" :
+                        if int(self.cuadro_1_2.cget("text")) > int(self.cuadro_2_2.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_1_3.cget("text") != "" and self.cuadro_1_4.cget("text") != "" :
+                        if int(self.cuadro_1_3.cget("text")) < int(self.cuadro_1_4.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_1_4.cget("text") != "" and self.cuadro_1_5.cget("text") != "" :
+                        if int(self.cuadro_1_4.cget("text")) < int(self.cuadro_1_5.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_3_2.cget("text") != "" and self.cuadro_4_2.cget("text") != "" :
+                        if int(self.cuadro_3_2.cget("text")) < int(self.cuadro_4_2.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_3_4.cget("text") != "" and self.cuadro_3_5.cget("text") != "" :
+                        if int(self.cuadro_3_4.cget("text")) < int(self.cuadro_3_5.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_4_4.cget("text") != "" and self.cuadro_4_5.cget("text") != "" :
+                        if int(self.cuadro_4_4.cget("text")) > int(self.cuadro_4_5.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_4_2.cget("text") != "" and self.cuadro_5_2.cget("text") != "" :
+                        if int(self.cuadro_4_2.cget("text")) < int(self.cuadro_5_2.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_5_2.cget("text") != "" and self.cuadro_5_3.cget("text") != "" :
+                        if int(self.cuadro_5_2.cget("text")) < int(self.cuadro_5_3.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MENOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+                    if self.cuadro_4_5.cget("text") != "" and self.cuadro_5_5.cget("text") != "" :
+                        if int(self.cuadro_4_5.cget("text")) > int(self.cuadro_5_5.cget("text")):
+                            btn.config(bg="red")
+                            mensaje("JUGADA NO ES VÁLIDA PORQUE NO CUMPLE CON LA RESTRICCIÓN DE MAYOR")
+                            btn.config(bg="#f0f0ed")
+                            btn.config(text="")
+                            self.borrar_jugada()
+        else:
+            mensaje("FALTA QUE SELECCIONE UN DÍGITO")
     def timer(self):
         configuracion_datos = Creadores.leer_datos_binary("futoshiki2021configuración.dat")
-        
-        self.sec = StringVar()
-        tk.Label(self.ventana_jugar, textvariable=self.sec,relief = GROOVE,height=2,width=8).place(relx=0.270, rely=0.800,anchor=CENTER)
-        self.sec.set(configuracion_datos["segundos"] )
-        self.mins= StringVar()
-        tk.Label(self.ventana_jugar, textvariable = self.mins,relief = GROOVE,height=2,width=8).place(relx=0.180, rely=0.800,anchor= CENTER)
-        self.mins.set(configuracion_datos["minutos"])
-        self.hrs= StringVar()
-        tk.Label(self.ventana_jugar, textvariable = self.hrs,relief = GROOVE,height=2,width=6).place(relx = 0.100, rely=0.800,anchor= CENTER)
-        self.hrs.set(configuracion_datos["horas"]) 
+        if configuracion_datos["timer"] == "si":
 
-        secu = 30
-        times = int(self.hrs.get())*3600+ int(self.mins.get())*60 + int(self.sec.get())
-        while times > -1:
-            minute,second = (times // 60 , times % 60)
-            hour = 0
-            if minute > 60:
-                hour , minute = (minute // 60 , minute % 60)
-            self.sec.set(second)
-            self.mins.set(minute)
-            self.hrs.set(hour)
-            #Update the time
-            self.ventana_jugar.update()
-            time.sleep(1)
-            if(times == 0):
-                self.sec.set("00")
-                self.mins.set('00')
-                self.hrs.set('00')
-                mensaje("SE ACABÓ EL TIEMPO")
-            times -= 1
+            #label del timer 
+            horas_label = tk.Label(self.ventana_jugar,text="Horas",relief= GROOVE, bg = "#f0f0ed",height=2,width=6).place(relx=0.100,rely = 0.750,anchor = CENTER)
+            minutos_label = tk.Label(self.ventana_jugar,text="Minutos",relief= GROOVE, bg = "#f0f0ed",height=2,width=8).place(relx=0.180,rely = 0.750,anchor = CENTER)
+            segundos_label= tk.Label(self.ventana_jugar,text="Segundos",relief= GROOVE, bg = "#f0f0ed",height=2,width=8).place(relx=0.270,rely = 0.750,anchor = CENTER)
+            
+            self.sec = StringVar()
+            tk.Label(self.ventana_jugar, textvariable=self.sec,relief = GROOVE,height=2,width=8).place(relx=0.270, rely=0.800,anchor=CENTER)
+            self.sec.set(configuracion_datos["segundos"] )
+            self.mins= StringVar()
+            tk.Label(self.ventana_jugar, textvariable = self.mins,relief = GROOVE,height=2,width=8).place(relx=0.180, rely=0.800,anchor= CENTER)
+            self.mins.set(configuracion_datos["minutos"])
+            self.hrs= StringVar()
+            tk.Label(self.ventana_jugar, textvariable = self.hrs,relief = GROOVE,height=2,width=6).place(relx = 0.100, rely=0.800,anchor= CENTER)
+            self.hrs.set(configuracion_datos["horas"]) 
+
+            secu = 30
+            times = int(self.hrs.get())*3600+ int(self.mins.get())*60 + int(self.sec.get())
+            while times > -1:
+                minute,second = (times // 60 , times % 60)
+                hour = 0
+                if minute > 60:
+                    hour , minute = (minute // 60 , minute % 60)
+                self.sec.set(second)
+                self.mins.set(minute)
+                self.hrs.set(hour)
+                #Update the time
+                self.ventana_jugar.update()
+                time.sleep(1)
+                if(times == 0):
+                    self.sec.set("00")
+                    self.mins.set('00')
+                    self.hrs.set('00')
+                    mensaje("SE ACABÓ EL TIEMPO")
+                times -= 1
+    def reloj(self):
+        configuracion_datos = Creadores.leer_datos_binary("futoshiki2021configuración.dat")
+        if configuracion_datos["reloj"] == "si":
+            self.hora_inicio = time.strftime("%H:%M:%S")
+            print(self.hora_inicio)    
     def cuadricula(self):
         cuadros_lista = ["","","","","","","","","","","","","","","","","","","","","","","","",""]  
         if self.bandera == True:
@@ -1472,21 +1490,37 @@ class Jugar:
         self.jugadas.clear()
         self.cuadricula()
     def top_10(self):
+        
+        
+        entrada = datetime.strptime(self.hora_inicio,"%H:%M:%S")
+        salida = datetime.strptime(self.hora_finalizacion,"%H:%M:%S")
+        tiempo_total = salida - entrada
         ventana_top = Creadores.crear_ventana("TOP 10",1000,500,ventana_principal)
         top_10_label= tk.Label(ventana_top,text="TOP 10").place(relx=0.500,rely=0.050,anchor=CENTER)
         top_facil_label = tk.Label(ventana_top,text="NIVEL FACIL").place(relx=0.100,rely=0.100,anchor=CENTER)
         top_intermedio_label = tk.Label(ventana_top,text="NIVEL INTERMEDIO").place(relx=0.500,rely=0.100,anchor=CENTER)
         top_dificil_label = tk.Label(ventana_top,text="NIVEL DIFICIL").place(relx=0.850,rely=0.100,anchor=CENTER)
         top_lista = [["","","","","","","","","",""],["","","","","","","","","",""],["","","","","","","","","",""]]
+        top_10 = Creadores.escribir_datos_binary("futoshiki2021top10.dat",top_lista)
 
-        top1_facil_nombre= tk.Label(ventana_top,text="David Morales").place(relx=0.050,rely=0.150,anchor=CENTER)
-        top1_facil_tiempo = tk.Label(ventana_top,text="00:04:54").place(relx=0.150,rely=0.150,anchor=CENTER)
-        top_facil = []
-        top_facil.insert(0,"")
-        top_facil.insert(1,"")
-        top_facil.insert(2,"")
-        top_facil.insert(3,"")
-        top_facil.insert(4,"")
+        if self.nivel == "facil":
+            top = Creadores.leer_datos_binary("futoshiki2021top10.dat")
+            """top1_facil_nombre= tk.Label(ventana_top,text=self.nom_jugador.get()).place(relx=0.050,rely=0.150,anchor=CENTER)
+            top1_facil_tiempo = tk.Label(ventana_top,text=tiempo_total).place(relx=0.150,rely=0.150,anchor=CENTER)"""
+            top1 = self.nom_jugador.get() + str(tiempo_total)
+
+            top_facil = []
+            top.insert(0,top1)
+            """top.insert([0][2],"")
+            top.insert([0][3],"")
+            top.insert([0][4],"")
+            top.insert([0][5],"")"""
+            to = Creadores.escribir_datos_binary("futoshiki2021top10.dat",top)
+            top_label = tk.Label(ventana_top,text=to[0]).place(relx=0.050,rely=0.150,anchor=CENTER)
+        if self.nivel == "intermedio":
+            pass
+        if self.nivel == "dificil":
+            pass
 
         #top = Creadores.escribir_datos_binary("futoshiki2021top10.dat",top_lista)
 # esta funcion es la restriccion para los numeros fijos en la cuadricula
@@ -1573,7 +1607,7 @@ class Configuracion:
     def configurar(self):
         ventana_configurar= Creadores.crear_ventana("Configurar",500,500,ventana_principal)
         configuracion_datos = open("futoshiki2021configuración.dat","wb")#CREA EL DAT DE CONFIGURARCION
-        configuracion = {"nivel":"facil","reloj":"si","horas":0,"minutos":0,"segundos":0,"posicion":"derecha"}
+        configuracion = {"nivel":"facil","reloj":"si","timer":"no","horas":0,"minutos":0,"segundos":0,"posicion":"derecha"}
         pickle.dump(configuracion,configuracion_datos)
         configuracion_datos.close()
         #NIVEL
@@ -1618,23 +1652,30 @@ class Configuracion:
     def guardar_horas(self,event):
 
         hrs = int(self.horas.get())
-      
-        configuracion_datos = Creadores.leer_datos_binary("futoshiki2021configuración.dat")
-        configuracion_datos["horas"]= hrs
-        configuracion = Creadores.escribir_datos_binary("futoshiki2021configuración.dat",configuracion_datos)
-        print(configuracion)
+        if hrs != 0:
+            configuracion_datos = Creadores.leer_datos_binary("futoshiki2021configuración.dat")
+            configuracion_datos["timer"] ="si" 
+            configuracion_datos["horas"]= hrs
+            configuracion = Creadores.escribir_datos_binary("futoshiki2021configuración.dat",configuracion_datos)
+            print(configuracion)
     def guardar_minutos(self,event):
         min = int(self.minutos.get())
-        configuracion_datos = Creadores.leer_datos_binary("futoshiki2021configuración.dat")
-        configuracion_datos["minutos"]= min
-        configuracion = Creadores.escribir_datos_binary("futoshiki2021configuración.dat",configuracion_datos)
-        print(configuracion)
+        if min != 0:
+            configuracion_datos = Creadores.leer_datos_binary("futoshiki2021configuración.dat")
+            configuracion_datos["timer"]= "si"
+            configuracion_datos["minutos"]= min
+            configuracion = Creadores.escribir_datos_binary("futoshiki2021configuración.dat",configuracion_datos)
+            print(configuracion)
+        
     def guardar_segundos(self,event):
         sec = int(self.segundos.get())
-        configuracion_datos = Creadores.leer_datos_binary("futoshiki2021configuración.dat")
-        configuracion_datos["segundos"]= sec
-        configuracion = Creadores.escribir_datos_binary("futoshiki2021configuración.dat",configuracion_datos)
-        print(configuracion)
+        if sec != 0:
+            configuracion_datos = Creadores.leer_datos_binary("futoshiki2021configuración.dat")
+            configuracion_datos["timer"]= "si"
+            configuracion_datos["segundos"]= sec
+            configuracion = Creadores.escribir_datos_binary("futoshiki2021configuración.dat",configuracion_datos)
+            print(configuracion)
+        
     def guardar_posicion(self,posicion):
       configuracion_datos = Creadores.leer_datos_binary("futoshiki2021configuración.dat")
       configuracion_datos["posicion"]= posicion
