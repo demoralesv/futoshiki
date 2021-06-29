@@ -184,7 +184,10 @@ class Jugar:
                 self.hora_finalizacion = time.strftime("%H:%M:%S")
                 self.bandera_juego = True
                 mensaje("FELICITACIONES JUEGO TERMINADO CON EXITO")
-                #self.jugar()
+                self.insert_top_10()
+                self.ventana_jugar.state(newstate="withdraw")
+                ventana_principal.state(newstate="normal")
+                
             
             if self.nivel == "facil":
                 if self.num_partida == 0:
@@ -1535,9 +1538,6 @@ class Jugar:
         count=0
         topi=[]
         largo=len(lista)
-        
-
-     
         for ind,p in enumerate(lista):
                 top_lista=[]
                 top_lista.insert(0,lista[count][0])
@@ -1571,7 +1571,7 @@ class Jugar:
          tiempo = tk.Label(ventana_top,text="TIEMPO").place(relx=0.900,rely=0.150,anchor=CENTER)
          self.generar_label(ventana_top,0.800,0.250,2,top)
         else:
-         self.insert_top_10()
+         #self.insert_top_10()
          self.ordenar_top_niveles()
          top=self.consultar_top10()
          count=0
