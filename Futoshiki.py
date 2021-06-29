@@ -1789,8 +1789,5 @@ salirmenu = tk.Menu(menubar,tearoff=0)
 salirmenu.add_command(label="Salir",command = lambda:extras.salir())
 menubar.add_cascade(label = "Salir",menu=salirmenu)
 ventana_principal.config(menu=menubar)
-fuente = tkfont.Font(family="Arial",size=30)
-
-
-     
+fuente = tkfont.Font(family="Arial",size=30)     
 ventana_principal.mainloop()
